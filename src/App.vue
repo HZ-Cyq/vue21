@@ -28,6 +28,7 @@ export default {
           title: "测试菜单",
           subMenu: [
             { title: "DemoComponent1", componentName: "DemoComponent1" },
+            { title: "DemoComponent2", componentName: "DemoComponent2" },
           ],
         },
       ],
@@ -37,7 +38,9 @@ export default {
   methods: {
     async loadComponent(name) {
       const componentMap = {
-        DemoComponent1: () => import("@/components/hovertreemenus/DemoComponent1.vue")
+        DemoComponent1: () => import("@/components/hovertreemenus/DemoComponent1.vue"),
+        DemoComponent2: () => import("@/components/hovertreemenus/DemoComponent2.vue"),
+        
       };
 
       try {
