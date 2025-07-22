@@ -31,6 +31,12 @@ export default {
             { title: "DemoComponent2", componentName: "DemoComponent2" },
           ],
         },
+        {
+          title: "图片",
+          subMenu: [
+            { title: "ShowImg", componentName: "ShowImg" },
+          ],
+        },
       ],
       currentComponent: null,
     }
@@ -40,7 +46,7 @@ export default {
       const componentMap = {
         DemoComponent1: () => import("@/components/hovertreemenus/DemoComponent1.vue"),
         DemoComponent2: () => import("@/components/hovertreemenus/DemoComponent2.vue"),
-        
+        ShowImg: () => import("@/components/png/ShowImg.vue")
       };
 
       try {
@@ -67,23 +73,25 @@ export default {
 }
 
 .sidebar {
-  width: 240px;
+  width: 20%;
   background-color: #2c3e50;
-  overflow-y: auto;
+  /* overflow-y: auto; */
 }
 .main {
   flex: 1;
-  position: relative;
+  /* position: relative; */
+  overflow: auto;
 }
 .plugin-panel {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 300px;
+  /* top: 20px;
+  right: 20px; */
+  width: 80%;
+  height: 100vh;
   background: white;
   border: 1px solid #ccc;
   padding: 10px;
-  z-index: 999;
+  /* z-index: 999; */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 </style>
