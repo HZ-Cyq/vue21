@@ -32,11 +32,19 @@ export default {
           ],
         },
         {
-          title: "图片",
+          title: "资源",
           subMenu: [
             { title: "ShowImg", componentName: "ShowImg" },
+            { title: "ShowGlb", componentName: "GlbViewer" },
           ],
         },
+        {
+          title: "颜色",
+          subMenu: [
+            { title: "色版", componentName: "ColorLegendExample" },
+          ],
+        },
+
       ],
       currentComponent: null,
     }
@@ -46,7 +54,9 @@ export default {
       const componentMap = {
         DemoComponent1: () => import("@/components/hovertreemenus/DemoComponent1.vue"),
         DemoComponent2: () => import("@/components/hovertreemenus/DemoComponent2.vue"),
-        ShowImg: () => import("@/components/png/ShowImg.vue")
+        ShowImg: () => import("@/components/resourceshow/ShowImg.vue"),
+        GlbViewer: () => import("@/components/resourceshow/GlbViewer.vue"),
+        ColorLegendExample: () => import("@/components/coloe/ColorLegendExample.vue")
       };
 
       try {
@@ -84,9 +94,9 @@ export default {
 }
 .plugin-panel {
   position: absolute;
-  /* top: 20px;
-  right: 20px; */
-  width: 80%;
+  top: 20px;
+  right: 20px;
+  width: 75%;
   height: 100vh;
   background: white;
   border: 1px solid #ccc;
