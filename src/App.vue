@@ -44,6 +44,20 @@ export default {
             { title: "色版", componentName: "ColorLegendExample" },
           ],
         },
+        {
+          title: "echarts",
+          subMenu: [
+            { title: "折线图", componentName: "LineChart" },
+            { title: "柱状图", componentName: "BarChart" },
+            { title: "饼状图", componentName: "PieChart" },
+            { title: "折线图2", componentName: "LineChart2" },
+            { title: "折线图3", componentName: "LineChart3" },
+            { title: "折线图4", componentName: "LineChart4" },
+            { title: "查询界面", componentName: "LineChart5" },
+            { title: "查询界面带递归", componentName: "ConditionGroup" },
+            { title: "查询界面带递归2", componentName: "ConditionGroup2" },
+          ],
+        },
 
       ],
       currentComponent: null,
@@ -56,7 +70,16 @@ export default {
         DemoComponent2: () => import("@/components/hovertreemenus/DemoComponent2.vue"),
         ShowImg: () => import("@/components/resourceshow/ShowImg.vue"),
         GlbViewer: () => import("@/components/resourceshow/GlbViewer.vue"),
-        ColorLegendExample: () => import("@/components/coloe/ColorLegendExample.vue")
+        ColorLegendExample: () => import("@/components/color/ColorLegendExample.vue"),
+        LineChart: () => import("@/components/echarts/LineChart.vue"),
+        BarChart: () => import("@/components/echarts/BarChart.vue"),
+        PieChart: () => import("@/components/echarts/PieChart.vue"),
+        LineChart2: () => import("@/components/echarts/LineChart2.vue"),
+        LineChart3: () => import("@/components/echarts/LineChart3.vue"),
+        LineChart4: () => import("@/components/echarts/LineChart4.vue"),
+        LineChart5: () => import("@/components/echarts/LineChart5.vue"),
+        ConditionGroup: () => import("@/components/echarts/ConditionGroup.vue"),
+        ConditionGroup2: () => import("@/components/echarts/ConditionGroup2.vue")
       };
 
       try {
