@@ -1,37 +1,40 @@
 <template>
-    <div style="width: 600px; height: 400px">
-      <v-chart :option="chartOptions" autoresize />
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    
-    mounted() {
-      console.log("LineChart mounted");
-    },
+  <div style="width: 600px; height: 400px">
+    <v-chart :option="chartOptions" autoresize />
+  </div>
+</template>
 
-    data() {
-      return {
-        chartOptions: {
-          title: { text: '折线图示例' },
-          tooltip: {},
-          xAxis: {
-            type: 'category',
-            data: ['一月', '二月', '三月', '四月']
-          },
-          yAxis: {
-            type: 'value'
-          },
-          series: [{
-            name: '销量',
-            type: 'line',
-            data: [10, 20, 15, 30]
-          }]
-        }
+<script>
+export default {
+
+  mounted() {
+    console.log("LineChart mounted");
+  },
+
+  data() {
+    return {
+      chartOptions: {
+        legend: {},
+        tooltip: {},
+        dataset: {
+          // 提供一份数据。
+          source: [
+            ['product', '2015', '2016', '2017'],
+            ['Matcha Latte', 43.3, 85.8, 93.7],
+            ['Milk Tea', 83.1, 73.4, 55.1],
+            ['Cheese Cocoa', 86.4, 65.2, 82.5],
+            ['Walnut Brownie', 72.4, 53.9, 39.1]
+          ]
+        },
+        // 声明一个 X 轴，类目轴（category）。默认情况下，类目轴对应到 dataset 第一列。
+        xAxis: { type: 'category' },
+        // 声明一个 Y 轴，数值轴。
+        yAxis: {},
+        // 声明多个 bar 系列，默认情况下，每个系列会自动对应到 dataset 的每一列。
+        series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }]
       }
     }
-
   }
-  </script>
-  
+
+}
+</script>

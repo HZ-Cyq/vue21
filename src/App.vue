@@ -45,8 +45,18 @@ export default {
           ],
         },
         {
+          title: "echarts2",
+          subMenu: [
+             {title: "按TrajID分组2", componentName: "LineChart44"},
+             {title: "按TrajID分组", componentName: "LineChart23"},
+            {title: "按行映射还是按列映射", componentName: "SeriesLayout"},
+            {title: "X轴的type", componentName: "XaxisType"},
+          ]
+        },
+        {
           title: "echarts",
           subMenu: [
+            { title: "带筛选的折线图2", componentName: "SelectedChart3" },
             { title: "折线图", componentName: "LineChart" },
             { title: "柱状图", componentName: "BarChart" },
             { title: "饼状图", componentName: "PieChart" },
@@ -56,6 +66,8 @@ export default {
             { title: "查询界面", componentName: "LineChart5" },
             { title: "查询界面带递归", componentName: "ConditionGroup" },
             { title: "查询界面带递归2", componentName: "ConditionGroup2" },
+            { title: "带筛选的折线图", componentName: "SelectedChart" },
+            { title: "带筛选的折线图2", componentName: "SelectedChart2" },
           ],
         },
 
@@ -79,7 +91,14 @@ export default {
         LineChart4: () => import("@/components/echarts/LineChart4.vue"),
         LineChart5: () => import("@/components/echarts/LineChart5.vue"),
         ConditionGroup: () => import("@/components/echarts/ConditionGroup.vue"),
-        ConditionGroup2: () => import("@/components/echarts/ConditionGroup2.vue")
+        ConditionGroup2: () => import("@/components/echarts/ConditionGroup2.vue"),
+        SelectedChart: () => import("@/components/echarts/SelectedChart.vue"),
+        SelectedChart2: () => import("@/components/echarts/SelectedChart2.vue"),
+        SelectedChart3: () => import("@/components/echarts/SelectedChart3.vue"),
+        SeriesLayout: () => import("@/components/echarts/learn/SeriesLayout.vue"),
+        XaxisType: () =>  import("@/components/echarts/learn/XaxisType.vue"),
+        LineChart23: () => import("@/components/echarts/learn/LineChat3.vue"),
+        LineChart44: () => import("@/components/echarts/learn/LineChart4.vue"),
       };
 
       try {
