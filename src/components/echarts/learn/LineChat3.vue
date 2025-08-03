@@ -9,7 +9,7 @@
     </div>
 
     <div style="margin-bottom: 12px">
-      <strong>分组选择（{{ groupField.join(', ') }}）：</strong>
+      <strong>分组选择（{{ groupField.join(' > ') }}）：</strong>
       <el-tree
         ref="groupTree"
         :data="treeData"
@@ -60,7 +60,8 @@ export default {
       [51, 3, 2, 22, 11, 4],
     ];
 
-    const groupField = ["TrajID", "Gid"];
+    const groupField = ["TrajID", "Gid"]; // 👈 可变字段，支持任何字段组合
+    // const groupField = ["TrajID"]; // 👈 可变字段，支持任何字段组合
 
     const yFields = [
       { field: "Latitude", label: "纬度", color: "#5470C6" },
@@ -73,61 +74,66 @@ export default {
     const header = rawSource[0];
     const rows = rawSource.slice(1);
 
-    const trajIdIndex = header.indexOf("TrajID");
-    const gidIndex = header.indexOf("Gid");
+    const buildTree = (data, level = 0, parentPath = []) => {
+      const field = groupField[level];
+      if (!field) return [];
 
-    const treeDataMap = new Map();
+      const index = header.indexOf(field);
+      const grouped = {};
 
-    rows.forEach(row => {
-      const trajId = row[trajIdIndex];
-      const gid = row[gidIndex];
-      if (!treeDataMap.has(trajId)) {
-        treeDataMap.set(trajId, new Set());
+      data.forEach(row => {
+        const key = row[index];
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(row);
+      });
+
+      return Object.entries(grouped).map(([key, subRows]) => {
+        const newPath = [...parentPath, key];
+        const id = newPath.join("_");
+        const node = {
+          id,
+          label: `${field}: ${key}`,
+        };
+        const children = buildTree(subRows, level + 1, newPath);
+        if (children.length) node.children = children;
+        return node;
+      });
+    };
+
+    const treeData = [
+      {
+        id: "all",
+        label: "全部",
+        children: buildTree(rows, 0, [])
       }
-      treeDataMap.get(trajId).add(gid);
-    });
-
-    const treeData = [{
-      id: 'all',
-      label: '全部 TrajID',
-      children: []
-    }];
+    ];
 
     const visibleGroups = [];
-
-    treeDataMap.forEach((gids, trajId) => {
-      const gidChildren = [];
-      gids.forEach(gid => {
-        const id = `${trajId}_${gid}`;
-        gidChildren.push({
-          id,
-          label: `Gid: ${gid}`
-        });
-        visibleGroups.push(id);
+    const collectLeafIds = nodes => {
+      nodes.forEach(node => {
+        if (node.children) {
+          collectLeafIds(node.children);
+        } else {
+          visibleGroups.push(node.id);
+        }
       });
-
-      treeData[0].children.push({
-        id: `traj_${trajId}`,
-        label: `TrajID: ${trajId}`,
-        children: gidChildren
-      });
-    });
+    };
+    collectLeafIds(treeData);
 
     const dataset = [
       { id: "raw", source: rawSource },
       ...visibleGroups.map(groupKey => {
-        const [trajId, gid] = groupKey.split("_");
+        const parts = groupKey.split("_");
+        const filterConds = parts.map((val, i) => ({
+          dimension: groupField[i],
+          eq: isNaN(val) ? val : parseInt(val)
+        }));
         return {
           id: `group_${groupKey}`,
           fromDatasetId: "raw",
           transform: {
             type: "filter",
-            config: {
-              and: [
-                { dimension: "TrajID", eq: parseInt(trajId) },
-                { dimension: "Gid", eq: parseInt(gid) }
-              ]
-            }
+            config: { and: filterConds }
           }
         };
       })
