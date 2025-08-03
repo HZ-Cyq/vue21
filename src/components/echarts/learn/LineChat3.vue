@@ -76,48 +76,43 @@ export default {
     const trajIdIndex = header.indexOf("TrajID");
     const gidIndex = header.indexOf("Gid");
 
-    // 构建树形数据：先分组TrajID，再分组Gid
     const treeDataMap = new Map();
 
     rows.forEach(row => {
       const trajId = row[trajIdIndex];
       const gid = row[gidIndex];
       if (!treeDataMap.has(trajId)) {
-        treeDataMap.set(trajId, new Map());
+        treeDataMap.set(trajId, new Set());
       }
-      const gidMap = treeDataMap.get(trajId);
-      if (!gidMap.has(gid)) {
-        gidMap.set(gid, true);
-      }
+      treeDataMap.get(trajId).add(gid);
     });
 
-    // 转成 Element Tree 需要的数组结构
-    const treeData = [];
-    treeDataMap.forEach((gidMap, trajId) => {
-      const children = [];
-      gidMap.forEach((_, gid) => {
-        children.push({
-          id: `${trajId}_${gid}`,
+    const treeData = [{
+      id: 'all',
+      label: '全部 TrajID',
+      children: []
+    }];
+
+    const visibleGroups = [];
+
+    treeDataMap.forEach((gids, trajId) => {
+      const gidChildren = [];
+      gids.forEach(gid => {
+        const id = `${trajId}_${gid}`;
+        gidChildren.push({
+          id,
           label: `Gid: ${gid}`
         });
+        visibleGroups.push(id);
       });
-      treeData.push({
-        id: `${trajId}`,
+
+      treeData[0].children.push({
+        id: `traj_${trajId}`,
         label: `TrajID: ${trajId}`,
-        children
+        children: gidChildren
       });
     });
 
-    // 初始化默认选中全部子节点
-    // 这里默认只选子节点(即每条折线)，父节点全选会自动触发子节点全选
-    const visibleGroups = [];
-    treeData.forEach(trajNode => {
-      trajNode.children.forEach(gidNode => {
-        visibleGroups.push(gidNode.id);
-      });
-    });
-
-    // dataset 用于echarts过滤
     const dataset = [
       { id: "raw", source: rawSource },
       ...visibleGroups.map(groupKey => {
@@ -157,7 +152,8 @@ export default {
 
   methods: {
     handleCheckChange() {
-      this.visibleGroups = this.$refs.groupTree.getCheckedKeys();
+      const keys = this.$refs.groupTree.getCheckedKeys(true);
+      this.visibleGroups = keys.filter(k => k.includes("_"));
     }
   },
 
