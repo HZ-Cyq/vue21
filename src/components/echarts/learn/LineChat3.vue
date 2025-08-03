@@ -10,14 +10,21 @@
 
     <div style="margin-bottom: 12px">
       <strong>分组选择（{{ groupField.join(', ') }}）：</strong>
-      <label style="margin-right: 12px; font-weight: bold;">
-        <input type="checkbox" v-model="allGroupsSelected" />
-        全选
-      </label>
-      <label v-for="id in allGroups" :key="id" style="margin-right: 12px">
-        <input type="checkbox" v-model="visibleGroups" :value="id" />
-        {{ id }}
-      </label>
+      <el-tree
+        ref="groupTree"
+        :data="treeData"
+        show-checkbox
+        node-key="id"
+        default-expand-all
+        :default-checked-keys="visibleGroups"
+        @check-change="handleCheckChange"
+        :props="defaultProps"
+        style="max-height: 300px; overflow-y: auto; border: 1px solid #ebeef5; padding: 8px;"
+      >
+        <span class="custom-tree-node" slot-scope="{ data }">
+          {{ data.label }}
+        </span>
+      </el-tree>
     </div>
 
     <div style="width: 800px; height: 500px">
@@ -53,7 +60,7 @@ export default {
       [51, 3, 2, 22, 11, 4],
     ];
 
-    const groupField = ["TrajID", "Gid"]; // 👈 支持多个字段
+    const groupField = ["TrajID", "Gid"];
 
     const yFields = [
       { field: "Latitude", label: "纬度", color: "#5470C6" },
@@ -66,28 +73,66 @@ export default {
     const header = rawSource[0];
     const rows = rawSource.slice(1);
 
-    const groupIndices = groupField.map(f => header.indexOf(f));
+    const trajIdIndex = header.indexOf("TrajID");
+    const gidIndex = header.indexOf("Gid");
 
-    // 获取每行的组合键
-    const getGroupKey = row => groupIndices.map(i => row[i]).join("_");
+    // 构建树形数据：先分组TrajID，再分组Gid
+    const treeDataMap = new Map();
 
-    const allGroups = Array.from(new Set(rows.map(getGroupKey)));
+    rows.forEach(row => {
+      const trajId = row[trajIdIndex];
+      const gid = row[gidIndex];
+      if (!treeDataMap.has(trajId)) {
+        treeDataMap.set(trajId, new Map());
+      }
+      const gidMap = treeDataMap.get(trajId);
+      if (!gidMap.has(gid)) {
+        gidMap.set(gid, true);
+      }
+    });
 
+    // 转成 Element Tree 需要的数组结构
+    const treeData = [];
+    treeDataMap.forEach((gidMap, trajId) => {
+      const children = [];
+      gidMap.forEach((_, gid) => {
+        children.push({
+          id: `${trajId}_${gid}`,
+          label: `Gid: ${gid}`
+        });
+      });
+      treeData.push({
+        id: `${trajId}`,
+        label: `TrajID: ${trajId}`,
+        children
+      });
+    });
+
+    // 初始化默认选中全部子节点
+    // 这里默认只选子节点(即每条折线)，父节点全选会自动触发子节点全选
+    const visibleGroups = [];
+    treeData.forEach(trajNode => {
+      trajNode.children.forEach(gidNode => {
+        visibleGroups.push(gidNode.id);
+      });
+    });
+
+    // dataset 用于echarts过滤
     const dataset = [
       { id: "raw", source: rawSource },
-      ...allGroups.map(groupKey => {
-        const groupVals = groupKey.split("_");
-        const filterConfigs = groupField.map((f, idx) => ({
-          dimension: f,
-          eq: groupVals[idx]
-        }));
-
+      ...visibleGroups.map(groupKey => {
+        const [trajId, gid] = groupKey.split("_");
         return {
           id: `group_${groupKey}`,
           fromDatasetId: "raw",
           transform: {
             type: "filter",
-            config: filterConfigs.length === 1 ? filterConfigs[0] : { and: filterConfigs }
+            config: {
+              and: [
+                { dimension: "TrajID", eq: parseInt(trajId) },
+                { dimension: "Gid", eq: parseInt(gid) }
+              ]
+            }
           }
         };
       })
@@ -100,22 +145,23 @@ export default {
       xAxis,
       yAxis,
       dataset,
-      allGroups,
-      visibleGroups: [...allGroups],
+      treeData,
+      visibleGroups,
+      defaultProps: {
+        children: "children",
+        label: "label"
+      },
       visibleFields: yFields.map(f => f.field)
     };
   },
 
-  computed: {
-    allGroupsSelected: {
-      get() {
-        return this.visibleGroups.length === this.allGroups.length;
-      },
-      set(value) {
-        this.visibleGroups = value ? [...this.allGroups] : [];
-      }
-    },
+  methods: {
+    handleCheckChange() {
+      this.visibleGroups = this.$refs.groupTree.getCheckedKeys();
+    }
+  },
 
+  computed: {
     chartOptions() {
       const series = [];
       this.visibleGroups.forEach(groupKey => {
@@ -145,3 +191,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.custom-tree-node {
+  user-select: none;
+}
+</style>
