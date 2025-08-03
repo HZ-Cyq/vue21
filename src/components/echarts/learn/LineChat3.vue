@@ -60,8 +60,9 @@ export default {
       [51, 3, 2, 22, 11, 4],
     ];
 
-    const groupField = ["TrajID", "Gid"]; // 👈 可变字段，支持任何字段组合
-    // const groupField = ["TrajID"]; // 👈 可变字段，支持任何字段组合
+    // 你改这里 groupField 即可测试单字段或多字段
+    // const groupField = ["Gid"]; // 或 ["TrajID", "Gid"]
+    const groupField = ["TrajID", "Gid"];
 
     const yFields = [
       { field: "Latitude", label: "纬度", color: "#5470C6" },
@@ -74,6 +75,7 @@ export default {
     const header = rawSource[0];
     const rows = rawSource.slice(1);
 
+    // 递归构建树结构
     const buildTree = (data, level = 0, parentPath = []) => {
       const field = groupField[level];
       if (!field) return [];
@@ -120,6 +122,7 @@ export default {
     };
     collectLeafIds(treeData);
 
+    // dataset 按 leaf 节点过滤
     const dataset = [
       { id: "raw", source: rawSource },
       ...visibleGroups.map(groupKey => {
@@ -159,7 +162,14 @@ export default {
   methods: {
     handleCheckChange() {
       const keys = this.$refs.groupTree.getCheckedKeys(true);
-      this.visibleGroups = keys.filter(k => k.includes("_"));
+      this.visibleGroups = keys.filter(k => {
+        if (k === "all") return false;
+        if (this.groupField.length === 1) {
+          return true;
+        } else {
+          return k.includes("_");
+        }
+      });
     }
   },
 
