@@ -43,7 +43,7 @@ export default {
       [31, 1, 1, 3, 4, 2],
       [41, 1, 1, 4, 5, 3],
       [51, 1, 1, 5, 6, 4],
-      [1, 2, 1, 1, 1, 0],
+      [1, 2, 1, 1, 1, 1],
       [12, 2, 1, 4, 1, 1],
       [31, 2, 1, 2, 1, 2],
       [41, 2, 1, 5, 1, 3],
@@ -60,42 +60,36 @@ export default {
       [51, 3, 2, 22, 11, 4],
     ];
 
-    // 你改这里 groupField 即可测试单字段或多字段
-    // const groupField = ["Gid"]; // 或 ["TrajID", "Gid"]
-    const groupField = ["TrajID", "Gid"];
+    const groupField = ["TrajID"];
 
     const yFields = [
-      { field: "Latitude", label: "纬度", color: "#5470C6" },
-      { field: "Longitude", label: "经度", color: "#91CC75" }
+      { field: "Latitude", label: "纬度", color: "#5470C6", yAxisIndex: 0 },
+      { field: "Longitude", label: "经度", color: "#91CC75", yAxisIndex: 0 },
+      { field: "Altitude", label: "高度", color: "#EE6666", yAxisIndex: 1 } // ← 配置在右轴
     ];
 
     const xAxis = { type: "value", name: "时间(s)" };
     const yAxis = { type: "value", name: "数值(度)" };
+    const y2Axis = { type: "value", name: "高度(米)", position: "right" };
+    // const y2Axis = {};
 
     const header = rawSource[0];
     const rows = rawSource.slice(1);
 
-    // 递归构建树结构
     const buildTree = (data, level = 0, parentPath = []) => {
       const field = groupField[level];
       if (!field) return [];
-
       const index = header.indexOf(field);
       const grouped = {};
-
       data.forEach(row => {
         const key = row[index];
         if (!grouped[key]) grouped[key] = [];
         grouped[key].push(row);
       });
-
       return Object.entries(grouped).map(([key, subRows]) => {
         const newPath = [...parentPath, key];
         const id = newPath.join("_");
-        const node = {
-          id,
-          label: `${field}: ${key}`,
-        };
+        const node = { id, label: `${field}: ${key}` };
         const children = buildTree(subRows, level + 1, newPath);
         if (children.length) node.children = children;
         return node;
@@ -122,7 +116,6 @@ export default {
     };
     collectLeafIds(treeData);
 
-    // dataset 按 leaf 节点过滤
     const dataset = [
       { id: "raw", source: rawSource },
       ...visibleGroups.map(groupKey => {
@@ -148,6 +141,7 @@ export default {
       yFields,
       xAxis,
       yAxis,
+      y2Axis,
       dataset,
       treeData,
       visibleGroups,
@@ -175,9 +169,17 @@ export default {
 
   computed: {
     chartOptions() {
+      // 是否需要右轴：yFields 中存在 yAxisIndex = 1 且字段已可见
+      const needRightAxis = this.yFields.some(
+        f => f.yAxisIndex === 1 && this.visibleFields.includes(f.field)
+      );
+
+      const yAxisConfig = [this.yAxis];
+      if (needRightAxis) yAxisConfig.push(this.y2Axis);
+
       const series = [];
       this.visibleGroups.forEach(groupKey => {
-        this.yFields.forEach(({ field, label, color }) => {
+        this.yFields.forEach(({ field, label, color, yAxisIndex }) => {
           if (this.visibleFields.includes(field)) {
             series.push({
               type: "line",
@@ -185,7 +187,8 @@ export default {
               datasetId: `group_${groupKey}`,
               encode: { x: "time", y: field },
               lineStyle: { color },
-              itemStyle: { color }
+              itemStyle: { color },
+              yAxisIndex
             });
           }
         });
@@ -195,7 +198,7 @@ export default {
         tooltip: {},
         legend: { top: "top" },
         xAxis: this.xAxis,
-        yAxis: this.yAxis,
+        yAxis: yAxisConfig,
         dataset: this.dataset,
         series
       };
