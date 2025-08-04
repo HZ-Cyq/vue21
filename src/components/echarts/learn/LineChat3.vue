@@ -36,42 +36,43 @@
 <script>
 export default {
   data() {
+
     const rawSource = [
-      ["time", "TrajID", "Gid", "Latitude", "Longitude", "Altitude"],
-      [1, 1, 1, 10, 2, 0],
-      [12, 1, 1, 2, 3, 1],
-      [31, 1, 1, 3, 4, 2],
-      [41, 1, 1, 4, 5, 3],
-      [51, 1, 1, 5, 6, 4],
-      [1, 2, 1, 1, 1, 1],
-      [12, 2, 1, 4, 1, 1],
-      [31, 2, 1, 2, 1, 2],
-      [41, 2, 1, 5, 1, 3],
-      [51, 2, 1, 6, 1, 4],
-      [1, 2, 2, 11, 11, 0],
-      [12, 2, 2, 14, 13, 1],
-      [31, 2, 2, 12, 14, 2],
-      [41, 2, 2, 15, 11, 3],
-      [51, 2, 2, 16, 1, 4],
-      [1, 3, 2, 7, 10, 0],
-      [12, 3, 2, 4, 11, 1],
-      [31, 3, 2, 9, 11, 2],
-      [41, 3, 2, 10, 11, 3],
-      [51, 3, 2, 22, 11, 4],
+      ["time", "TrajID", "Gid", "Latitude", "Longitude", "Altitude","time1"],
+      [1, 1, 1, 10, 2, 0, 1],
+      [12, 1, 1, 2, 3, 1, 12],
+      [31, 1, 1, 3, 4, 2, 31],
+      [41, 1, 1, 4, 5, 3, 41],
+      [51, 1, 1, 5, 6, 4, 51],
+      [1, 2, 1, 1, 1, 1, 1],
+      [12, 2, 1, 4, 1, 1, 12],
+      [31, 2, 1, 2, 1, 2, 31],
+      [41, 2, 1, 5, 1, 3, 41],
+      [51, 2, 1, 6, 1, 4, 51],
+      [1, 2, 2, 11, 11, 0, 1],
+      [12, 2, 2, 14, 13, 1, 12],
+      [31, 2, 2, 12, 14, 2, 31],
+      [41, 2, 2, 15, 11, 3, 41],
+      [51, 2, 2, 16, 1, 4, 51],
+      [1, 3, 2, 7, 10, 0, 1],
+      [12, 3, 2, 4, 11, 1, 12],
+      [31, 3, 2, 9, 11, 2, 31],
+      [41, 3, 2, 10, 11, 3, 41],
+      [51, 3, 2, 22, 11, 4, 51],
     ];
 
-    const groupField = ["TrajID"];
+    const xField = "time"; // ⬅️ 定义 x 轴字段变量
+    const groupField = ["Gid","TrajID"];
 
     const yFields = [
       { field: "Latitude", label: "纬度", color: "#5470C6", yAxisIndex: 0 },
       { field: "Longitude", label: "经度", color: "#91CC75", yAxisIndex: 0 },
-      { field: "Altitude", label: "高度", color: "#EE6666", yAxisIndex: 1 } // ← 配置在右轴
+      { field: "Altitude", label: "高度", color: "#EE6666", yAxisIndex: 1 }
     ];
 
-    const xAxis = { type: "value", name: "时间(s)" };
+    const xAxis = { type: "value", name: `时间(s)` };
     const yAxis = { type: "value", name: "数值(度)" };
     const y2Axis = { type: "value", name: "高度(米)", position: "right" };
-    // const y2Axis = {};
 
     const header = rawSource[0];
     const rows = rawSource.slice(1);
@@ -100,7 +101,7 @@ export default {
       {
         id: "all",
         label: "全部",
-        children: buildTree(rows, 0, [])
+        children: buildTree(rows)
       }
     ];
 
@@ -138,6 +139,7 @@ export default {
     return {
       rawSource,
       groupField,
+      xField,
       yFields,
       xAxis,
       yAxis,
@@ -169,7 +171,6 @@ export default {
 
   computed: {
     chartOptions() {
-      // 是否需要右轴：yFields 中存在 yAxisIndex = 1 且字段已可见
       const needRightAxis = this.yFields.some(
         f => f.yAxisIndex === 1 && this.visibleFields.includes(f.field)
       );
@@ -185,7 +186,7 @@ export default {
               type: "line",
               name: `${groupKey} - ${label}`,
               datasetId: `group_${groupKey}`,
-              encode: { x: "time", y: field },
+              encode: { x: this.xField, y: field },
               lineStyle: { color },
               itemStyle: { color },
               yAxisIndex
@@ -197,7 +198,7 @@ export default {
       return {
         tooltip: {},
         legend: { top: "top" },
-        xAxis: this.xAxis,
+        xAxis: { ...this.xAxis, name: `${this.xField}(s)` },
         yAxis: yAxisConfig,
         dataset: this.dataset,
         series
