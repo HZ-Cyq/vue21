@@ -10,7 +10,7 @@ export default {
   data() {
     return {
       num: 1,
-    }
+    };
   },
   mounted() {
     console.log("DemoComponent1 mounted");
@@ -20,11 +20,35 @@ export default {
   }
 };
 </script>
-<!--  lang="scss": 使用SCSS预处理语言，不是纯CSS语言 -->
-<!--  scoped: 只对当前的组件有效 -->
+
 <style lang="scss" scoped>
 .div-cla {
   background-color: green;
 
+  // 👉 深度作用：选中 el-input-number 内部的 input
+  ::v-deep(.el-input__inner) {
+    background-color: transparent;
+    color: white; // 可选：字体颜色
+  }
+  // 隐藏增加和减少按钮
+  ::v-deep(.el-input-number__decrease),
+  ::v-deep(.el-input-number__increase)
+   {
+    width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: none;
+  }
+  // 调小输入框左边两边的padding
+  ::v-deep(.el-input__inner) {
+    padding-left:10px !important;
+    padding-right: 10px !important;
+  }
+
+  // 👉 选中整个 el-input-number 边框容器
+  // ::v-deep(.el-input-number) {
+  //   background-color: green;
+  //   border-color: green;
+  // }
 }
 </style>
