@@ -32,6 +32,12 @@ export default {
           ],
         },
         {
+          title: "element-ui",
+          subMenu: [
+            {title: "ElInputNumber", componentName: "ElInputNumber"},
+          ]
+        },
+        {
           title: "资源",
           subMenu: [
             { title: "ShowImg", componentName: "ShowImg" },
@@ -99,6 +105,7 @@ export default {
         XaxisType: () =>  import("@/components/echarts/learn/XaxisType.vue"),
         LineChart23: () => import("@/components/echarts/learn/LineChat3.vue"),
         LineChart44: () => import("@/components/echarts/learn/LineChart4.vue"),
+        ElInputNumber: () => import("@/components/elementui/ElInputNumber.vue"),
       };
 
       try {
