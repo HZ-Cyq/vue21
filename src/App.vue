@@ -34,10 +34,10 @@ export default {
         {
           title: "element-ui",
           subMenu: [
-            {title: "TestElInputNumber", componentName: "TestElInputNumber"},
-            {title: "TestElTable", componentName: "TestElTable"},
-            {title: "TestElTable2", componentName: "TestElTable2"},
-            {title: "TestElInput", componentName: "TestElInput"}
+            { title: "TestElInputNumber", componentName: "TestElInputNumber" },
+            { title: "TestElTable", componentName: "TestElTable" },
+            { title: "TestElTable2", componentName: "TestElTable2" },
+            { title: "TestElInput", componentName: "TestElInput" }
           ]
         },
         {
@@ -54,11 +54,19 @@ export default {
           ],
         },
         {
+          title: "echart字段",
+          subMenu: [
+            { title: "trigger字段-axis", componentName: "TestAxisTrigger" },
+            { title: "trigger字段-item", componentName: "TestItemTrigger" },
+          ]
+        },
+        {
           title: "echarts2",
           subMenu: [
-             {title: "按TrajID分组", componentName: "LineChart23"},
-            {title: "按行映射还是按列映射", componentName: "SeriesLayout"},
-            {title: "X轴的type", componentName: "XaxisType"},
+            { title: "动态折线图", componentName: "DynamicChart" },
+            { title: "按TrajID分组", componentName: "LineChart23" },
+            { title: "按行映射还是按列映射", componentName: "SeriesLayout" },
+            { title: "X轴的type", componentName: "XaxisType" },
           ]
         },
         {
@@ -105,9 +113,12 @@ export default {
         SelectedChart2: () => import("@/components/echarts/SelectedChart2.vue"),
         SelectedChart3: () => import("@/components/echarts/SelectedChart3.vue"),
         SeriesLayout: () => import("@/components/echarts/learn/SeriesLayout.vue"),
-        XaxisType: () =>  import("@/components/echarts/learn/XaxisType.vue"),
+        XaxisType: () => import("@/components/echarts/learn/XaxisType.vue"),
         LineChart23: () => import("@/components/echarts/learn/LineChat3.vue"),
         LineChart44: () => import("@/components/echarts/learn/LineChart4.vue"),
+        DynamicChart: () => import("@/components/echarts/learn/DynamicChart.vue"),
+        TestAxisTrigger: () => import("@/components/echarts/learn/trigger/TestAxisTrigger.vue"),
+        TestItemTrigger: () => import("@/components/echarts/learn/trigger/TestItemTrigger.vue"),
         TestElInputNumber: () => import("@/components/elementui/TestElInputNumber.vue"),
         TestElTable: () => import("@/components/elementui/TestElTable.vue"),
         TestElTable2: () => import("@/components/elementui/TestElTable2.vue"),
@@ -143,11 +154,13 @@ export default {
   background-color: #2c3e50;
   /* overflow-y: auto; */
 }
+
 .main {
   flex: 1;
   /* position: relative; */
   overflow: auto;
 }
+
 .plugin-panel {
   position: absolute;
   top: 20px;
