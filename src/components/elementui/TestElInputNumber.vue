@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: "DemoComponent1",
+  name: "TestElInputNumber",
   data() {
     return {
       num: 1,

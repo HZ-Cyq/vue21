@@ -34,7 +34,10 @@ export default {
         {
           title: "element-ui",
           subMenu: [
-            {title: "ElInputNumber", componentName: "ElInputNumber"},
+            {title: "TestElInputNumber", componentName: "TestElInputNumber"},
+            {title: "TestElTable", componentName: "TestElTable"},
+            {title: "TestElTable2", componentName: "TestElTable2"},
+            {title: "TestElInput", componentName: "TestElInput"}
           ]
         },
         {
@@ -53,7 +56,6 @@ export default {
         {
           title: "echarts2",
           subMenu: [
-             {title: "按TrajID分组2", componentName: "LineChart44"},
              {title: "按TrajID分组", componentName: "LineChart23"},
             {title: "按行映射还是按列映射", componentName: "SeriesLayout"},
             {title: "X轴的type", componentName: "XaxisType"},
@@ -62,6 +64,7 @@ export default {
         {
           title: "echarts",
           subMenu: [
+            { title: "散点图", componentName: "TestBasicScatterChart" },
             { title: "带筛选的折线图2", componentName: "SelectedChart3" },
             { title: "折线图", componentName: "LineChart" },
             { title: "柱状图", componentName: "BarChart" },
@@ -105,7 +108,11 @@ export default {
         XaxisType: () =>  import("@/components/echarts/learn/XaxisType.vue"),
         LineChart23: () => import("@/components/echarts/learn/LineChat3.vue"),
         LineChart44: () => import("@/components/echarts/learn/LineChart4.vue"),
-        ElInputNumber: () => import("@/components/elementui/ElInputNumber.vue"),
+        TestElInputNumber: () => import("@/components/elementui/TestElInputNumber.vue"),
+        TestElTable: () => import("@/components/elementui/TestElTable.vue"),
+        TestElTable2: () => import("@/components/elementui/TestElTable2.vue"),
+        TestBasicScatterChart: () => import("@/components/echarts/TestBasicScatterChart.vue"),
+        TestElInput: () => import("@/components/elementui/testelinput/TestElInput.vue"),
       };
 
       try {
