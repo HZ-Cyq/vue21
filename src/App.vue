@@ -58,6 +58,7 @@ export default {
           subMenu: [
             { title: "trigger字段-axis", componentName: "TestAxisTrigger" },
             { title: "trigger字段-item", componentName: "TestItemTrigger" },
+            { title: "title字段", componentName: "TestEchartTitle" },
           ]
         },
         {
@@ -119,6 +120,7 @@ export default {
         DynamicChart: () => import("@/components/echarts/learn/DynamicChart.vue"),
         TestAxisTrigger: () => import("@/components/echarts/learn/trigger/TestAxisTrigger.vue"),
         TestItemTrigger: () => import("@/components/echarts/learn/trigger/TestItemTrigger.vue"),
+        TestEchartTitle: () => import("@/components/echarts/learn/title/TestEchartTitle.vue"),
         TestElInputNumber: () => import("@/components/elementui/TestElInputNumber.vue"),
         TestElTable: () => import("@/components/elementui/TestElTable.vue"),
         TestElTable2: () => import("@/components/elementui/TestElTable2.vue"),
