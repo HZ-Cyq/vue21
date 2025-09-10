@@ -29,6 +29,7 @@ export default {
           subMenu: [
             { title: "DemoComponent1", componentName: "DemoComponent1" },
             { title: "DemoComponent2", componentName: "DemoComponent2" },
+            { title: "MyTest", componentName: "MyTest" },
           ],
         },
         {
@@ -56,6 +57,9 @@ export default {
         {
           title: "echart字段",
           subMenu: [
+            { title: "dataset字段", componentName: "TestEchartDataset" },
+            { title: "tooltip字段", componentName: "TestEchartTooltip" },
+            { title: "legend字段", componentName: "TestEchartLegend" },
             { title: "trigger字段-axis", componentName: "TestAxisTrigger" },
             { title: "trigger字段-item", componentName: "TestItemTrigger" },
             { title: "title字段", componentName: "TestEchartTitle" },
@@ -64,6 +68,8 @@ export default {
         {
           title: "echarts2",
           subMenu: [
+            { title: "双Y轴折线图+dataset+transform", componentName: "DoubleYAxiChartWithDatasetAndTransform" },
+            { title: "双Y轴折线图", componentName: "DoubleYAxiChart" },
             { title: "动态折线图", componentName: "DynamicChart" },
             { title: "按TrajID分组", componentName: "LineChart23" },
             { title: "按行映射还是按列映射", componentName: "SeriesLayout" },
@@ -118,14 +124,23 @@ export default {
         LineChart23: () => import("@/components/echarts/learn/LineChat3.vue"),
         LineChart44: () => import("@/components/echarts/learn/LineChart4.vue"),
         DynamicChart: () => import("@/components/echarts/learn/DynamicChart.vue"),
-        TestAxisTrigger: () => import("@/components/echarts/learn/trigger/TestAxisTrigger.vue"),
-        TestItemTrigger: () => import("@/components/echarts/learn/trigger/TestItemTrigger.vue"),
-        TestEchartTitle: () => import("@/components/echarts/learn/title/TestEchartTitle.vue"),
+        
+        TestAxisTrigger: () => import("@/components/echarts/learn/field/trigger/TestAxisTrigger.vue"),
+        TestItemTrigger: () => import("@/components/echarts/learn/field/trigger/TestItemTrigger.vue"),
+        TestEchartTitle: () => import("@/components/echarts/learn/field/title/TestEchartTitle.vue"),
+        TestEchartLegend: () => import("@/components/echarts/learn/field/legend/TestEchartLegend.vue"),
+        TestEchartTooltip: () => import("@/components/echarts/learn/field/tooltip/TestEchartTooltip.vue"),
+        TestEchartDataset: () => import("@/components/echarts/learn/field/dataset/TestEchartDataset.vue"),
+        
+        DoubleYAxiChart: () => import("@/components/echarts/learn/type/DoubleYAxiChart.vue"),
+        DoubleYAxiChartWithDatasetAndTransform: () => import("@/components/echarts/learn/type/DoubleYAxisChartWithDatasetAndTransform.vue"),
+
         TestElInputNumber: () => import("@/components/elementui/TestElInputNumber.vue"),
         TestElTable: () => import("@/components/elementui/TestElTable.vue"),
         TestElTable2: () => import("@/components/elementui/TestElTable2.vue"),
         TestBasicScatterChart: () => import("@/components/echarts/TestBasicScatterChart.vue"),
         TestElInput: () => import("@/components/elementui/testelinput/TestElInput.vue"),
+        MyTest: () => import("@/components/echarts/learn/MyTest.vue")
       };
 
       try {

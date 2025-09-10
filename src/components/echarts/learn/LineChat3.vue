@@ -195,7 +195,7 @@ export default {
         });
       });
 
-      return {
+      let re = {
         tooltip: {},
         legend: { top: "top" },
         xAxis: { ...this.xAxis, name: `${this.xField}(s)` },
@@ -203,6 +203,8 @@ export default {
         dataset: this.dataset,
         series
       };
+      console.log(re);
+      return re;
     }
   }
 };
