@@ -46,6 +46,7 @@ export default {
           subMenu: [
             { title: "ShowImg", componentName: "ShowImg" },
             { title: "ShowGlb", componentName: "GlbViewer" },
+            { title: "ChangePngColor", componentName: "ChangePngColor" },
           ],
         },
         {
@@ -68,6 +69,7 @@ export default {
         {
           title: "echarts2",
           subMenu: [
+            { title: "二维进度图", componentName: "ShowTaskProgress"},
             { title: "双Y轴折线图+dataset+transform", componentName: "DoubleYAxiChartWithDatasetAndTransform" },
             { title: "双Y轴折线图", componentName: "DoubleYAxiChart" },
             { title: "动态折线图", componentName: "DynamicChart" },
@@ -106,6 +108,7 @@ export default {
         DemoComponent2: () => import("@/components/hovertreemenus/DemoComponent2.vue"),
         ShowImg: () => import("@/components/resourceshow/ShowImg.vue"),
         GlbViewer: () => import("@/components/resourceshow/GlbViewer.vue"),
+        ChangePngColor: () => import("@/components/resourceexchange/ChangePngColor.vue"),
         ColorLegendExample: () => import("@/components/color/ColorLegendExample.vue"),
         LineChart: () => import("@/components/echarts/LineChart.vue"),
         BarChart: () => import("@/components/echarts/BarChart.vue"),
@@ -124,6 +127,7 @@ export default {
         LineChart23: () => import("@/components/echarts/learn/LineChat3.vue"),
         LineChart44: () => import("@/components/echarts/learn/LineChart4.vue"),
         DynamicChart: () => import("@/components/echarts/learn/DynamicChart.vue"),
+        ShowTaskProgress: () => import("@/components/echarts/learn/ShowTaskProgress.vue"),
         
         TestAxisTrigger: () => import("@/components/echarts/learn/field/trigger/TestAxisTrigger.vue"),
         TestItemTrigger: () => import("@/components/echarts/learn/field/trigger/TestItemTrigger.vue"),
