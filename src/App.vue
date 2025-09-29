@@ -47,6 +47,7 @@ export default {
             { title: "ShowImg", componentName: "ShowImg" },
             { title: "ShowGlb", componentName: "GlbViewer" },
             { title: "ChangePngColor", componentName: "ChangePngColor" },
+            { title: "ShowUploadImg", componentName: "ShowUploadImg" },
           ],
         },
         {
@@ -109,6 +110,7 @@ export default {
         ShowImg: () => import("@/components/resourceshow/ShowImg.vue"),
         GlbViewer: () => import("@/components/resourceshow/GlbViewer.vue"),
         ChangePngColor: () => import("@/components/resourceexchange/ChangePngColor.vue"),
+        ShowUploadImg: () => import("@/components/resourceshow/ShowUploadImg.vue"),
         ColorLegendExample: () => import("@/components/color/ColorLegendExample.vue"),
         LineChart: () => import("@/components/echarts/LineChart.vue"),
         BarChart: () => import("@/components/echarts/BarChart.vue"),
