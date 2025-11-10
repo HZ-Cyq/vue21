@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<head>
+    <mera charset="UTF-8"></mera>
+    <title> random-color-addeventlistener</title>
+</head>
+<body>
+    <button>click me</button>
+    <script>
+        // 返回一个[0,number）之间的值
+        function random(number) {
+            // Math.random的返回值是[0,1）
+            return Math.floor(Math.random() * number);
+        }
+        // 将事件改成
+        // focus 和 blur：当按钮被聚焦或失焦时，颜色会改变；尝试按下 tab 键来聚焦于按钮，再次按下该键来使按钮失去焦点。这些事件通常用于在聚焦时显示填入表单字段的信息，或者在表单字段填入不正确的值时显示错误信息。
+        // dblclick: 颜色只在按钮被双击时改变。
+        // mouseover 和 mouseout:当鼠标指针在按钮上悬停，或指针移出按钮时，颜色分别会改变。
+        document.querySelector("button").addEventListener("click", event => {
+            console.log(event);
+            let randomColor = `rgb(${random(256)},${random(256)},${random(256)})`;
+            document.body.style.backgroundColor = randomColor;
+        })
+    </script>
+</body>

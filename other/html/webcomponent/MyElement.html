@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>自定义元素</title>
+    </head>
+    <body>
+        <!-- 使用自定义标签 -->
+         <my-element></my-element>
+         <script>
+            // 定义一个自定义元素
+            class MyElement extends HTMLElement {
+                constructor() {
+                    super();
+                    this.innerHTML = "<p>Hello Web Component</p>"
+                }
+            }
+            // 注册到浏览器
+            customElements.define("my-element", MyElement);
+         </script>
+    </body>
+</html>

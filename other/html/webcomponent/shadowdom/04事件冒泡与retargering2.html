@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head><meta charset="UTF-8"><title>练习4 - 事件</title></head>
+<body>
+  <h2>练习4：事件</h2>
+  <shadow-btn></shadow-btn>
+
+  <script>
+    class ShadowBtn extends HTMLElement {
+      constructor() {
+        super();
+        const s = this.attachShadow({ mode: "open" });
+        s.innerHTML = `<button>点我</button>`;
+        s.querySelector("button").addEventListener("click", () => {
+          // bubbles:事件是否能冒泡到外层
+          // composed:事件是否能穿透shadow dom边界
+          this.dispatchEvent(new CustomEvent("my-click", { bubbles: true, composed: true }));
+        });
+      }
+    }
+    customElements.define("shadow-btn", ShadowBtn);
+
+    document.body.addEventListener("my-click", (e) => {
+      console.log("事件捕获：", e);
+      console.log("event.target:", e.target); // 是 <shadow-btn>，不是内部 button
+      console.log("完整路径:", e.composedPath());
+    });
+  </script>
+</body>
+</html>

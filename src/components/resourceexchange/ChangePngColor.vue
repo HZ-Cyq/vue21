@@ -2,8 +2,21 @@
     <div id="app">
       <h2>批量 蓝色 → 自定义颜色 映射工具</h2>
   
-      <!-- 批量上传图片 -->
-      <input type="file" multiple @change="onFilesChange" />
+      <!-- el-upload：隐藏文件列表，选择后清空 -->
+      <el-upload
+        ref="upload"
+        :auto-upload="false"
+        :on-change="onUploadChange"
+        :show-file-list="false"
+        multiple
+        action="#"
+      >
+        <el-button type="primary">选择图片文件（替换全部）</el-button>
+        <template #tip>
+          <div class="el-upload__tip">每次选择将替换之前的所有图片</div>
+        </template>
+      </el-upload>
+  
       <br /><br />
   
       <!-- 选择目标颜色 -->
@@ -15,94 +28,117 @@
       <div class="preview" v-if="images.length">
         <div v-for="(img, index) in images" :key="index">
           <h3>{{ img.name }}</h3>
-          <!-- 原图 Canvas -->
           <canvas ref="originalCanvas"></canvas>
-          <!-- 转换后的 Canvas -->
           <canvas ref="convertedCanvas"></canvas>
         </div>
       </div>
   
       <!-- 批量转换按钮 -->
-      <button @click="convertAll">批量转换并下载 ZIP</button>
+      <el-button type="success" @click="convertAll" style="margin-top: 20px;">
+        批量转换并下载 ZIP
+      </el-button>
     </div>
   </template>
   
   <script>
-  import JSZip from "jszip"; // 用于在浏览器端生成 zip 文件
+  import JSZip from 'jszip';
   
   export default {
-    name: "ChangePngColor",
+    name: 'ChangePngColor',
     data() {
       return {
-        images: [],       // 存储上传的图片信息 [{name, image}]
-        targetColor: "#ff0000", // 默认目标颜色红色
+        images: [],       // 存储当前批次的图片
+        targetColor: '#00ffff',
+        isProcessingFirst: false, // 标记是否正在处理第一批
       };
     },
     methods: {
       /**
-       * 文件上传处理
-       * @param {Event} e - input change 事件
+       * el-upload change 事件：处理文件选择
        */
-      onFilesChange(e) {
-        this.images = [];
-        const files = e.target.files;
-        if (!files.length) return;
-        for(let file of files) {
-          const reader = new FileReader(); // 读取文件为 DataURL
-          reader.onload = (event) => {
-            const img = new Image(); // 创建 Image 对象
-            img.onload = () => {
-              // 将图片对象加入 images 数组
-              this.images.push({ name: file.name, image: img });
-  
-              // 等 DOM 渲染完后设置 canvas 宽高和绘制原图
-              this.$nextTick(() => {
-                const index = this.images.length - 1;
-  
-                // 原图 Canvas 设置
-                const origCanvas = this.$refs.originalCanvas[index];
-                origCanvas.width = img.width;
-                origCanvas.height = img.height;
-                origCanvas.getContext("2d").drawImage(img, 0, 0);
-  
-                // 转换 Canvas 设置宽高，但先不绘制
-                const convCanvas = this.$refs.convertedCanvas[index];
-                convCanvas.width = img.width;
-                convCanvas.height = img.height;
-              });
-            };
-            img.src = event.target.result; // 设置图片源
-          };
-          reader.readAsDataURL(file); // 读取文件
+      onUploadChange(file, fileList) {
+        // ✅ 第一次触发时，清空之前的图片数据
+        if (!this.isProcessingFirst) {
+          this.isProcessingFirst = true;
+          this.images = []; // 清空上一批图片
         }
-        // Array.from(files).forEach((file) => {
-        // });
+  
+        const isImage = file.raw.type.startsWith('image/');
+        if (!isImage) {
+          this.$message.warning(`已忽略非图片文件：${file.name}`);
+          return;
+        }
+  
+        // 读取当前文件
+        this.readFile(file.raw);
+  
+        // ✅ 如果是最后一个文件，说明本次选择已结束，可以清空 upload 列表
+        if (fileList.length === 0 || this.isLastFile(file, fileList)) {
+          this.$nextTick(() => {
+            this.$refs.upload.clearFiles(); // 清空 UI 显示
+            this.isProcessingFirst = false; // 重置标记，为下次选择准备
+          });
+        }
       },
   
       /**
-       * 十六进制颜色转 RGB 对象
-       * @param {string} hex - 十六进制颜色，如 #ff5027
-       * @returns {Object} {r, g, b}
+       * 判断是否是最后一个待处理文件
        */
+      isLastFile(currentFile, fileList) {
+        // el-upload 的 fileList 是包含当前文件的完整列表
+        // 当前文件在列表中的索引
+        const currentIndex = fileList.findIndex(f => f.uid === currentFile.uid);
+        // 如果是最后一个（或唯一一个）
+        return currentIndex === fileList.length - 1;
+      },
+  
+      /**
+       * 读取文件并添加到 images
+       */
+      readFile(file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => {
+            this.images.push({ name: file.name, image: img });
+  
+            this.$nextTick(() => {
+              const index = this.images.length - 1;
+              const origCanvas = this.$refs.originalCanvas?.[index];
+              const convCanvas = this.$refs.convertedCanvas?.[index];
+  
+              if (origCanvas) {
+                origCanvas.width = img.width;
+                origCanvas.height = img.height;
+                origCanvas.getContext('2d').drawImage(img, 0, 0);
+              }
+  
+              if (convCanvas) {
+                convCanvas.width = img.width;
+                convCanvas.height = img.height;
+              }
+            });
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      },
+  
       hexToRgb(hex) {
-        hex = hex.replace("#", "");
-        if (hex.length === 3) hex = hex.split("").map(c => c + c).join("");
+        hex = hex.replace('#', '');
+        if (hex.length === 3) {
+          hex = hex.split('').map(c => c + c).join('');
+        }
         const num = parseInt(hex, 16);
         return {
           r: (num >> 16) & 255,
           g: (num >> 8) & 255,
-          b: num & 255
+          b: num & 255,
         };
       },
   
-      /**
-       * 将图片中的蓝色或偏蓝色转换成目标颜色
-       * @param {Image} img - 原始图片对象
-       * @param {HTMLCanvasElement} canvas - 转换后的 Canvas
-       * @param {Object} target - RGB 目标颜色 {r, g, b}
-       */
       processCanvas(img, canvas, target) {
-        const ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
   
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -112,70 +148,78 @@
           const r = data[i];
           const g = data[i + 1];
           const b = data[i + 2];
-  
-          // 蓝色占主导（b最大）
+          // 如果蓝色分量是最大的，就认为是蓝色或偏蓝
           if (b > r && b > g) {
-            const factor = b / 255; // 保留蓝色明暗程度
-            data[i] = Math.round(target.r * factor); // 替换 R
-            data[i + 1] = Math.round(target.g * factor); // 替换 G
-            data[i + 2] = Math.round(target.b * factor); // 替换 B
+            // 映射：保持亮度比例
+            const factor = b / 255; // 蓝色强度比例
+            data[i] = Math.round(target.r * factor);
+            data[i + 1] = Math.round(target.g * factor);
+            data[i + 2] = Math.round(target.b * factor);
           }
-          // 其他颜色保持不变
         }
   
         ctx.putImageData(imageData, 0, 0);
       },
   
-      /**
-       * 批量处理所有图片并打包下载 zip
-       */
       async convertAll() {
         if (!this.images.length) {
-          alert("请先上传图片");
+          this.$message.warning('请先上传图片');
           return;
         }
   
         const target = this.hexToRgb(this.targetColor);
         const zip = new JSZip();
   
+        await this.$nextTick();
+  
         for (let index = 0; index < this.images.length; index++) {
           const item = this.images[index];
-  
-          // 确保 DOM 已渲染
-          await this.$nextTick();
-  
-          const canvas = this.$refs.convertedCanvas[index];
+          const canvas = this.$refs.convertedCanvas?.[index];
           if (!canvas) continue;
   
-          // 处理蓝色转换
           this.processCanvas(item.image, canvas, target);
   
-          // 转换 Canvas 为 blob
-          const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
-          zip.file(item.name, blob); // 保留原始文件名
+          const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+          zip.file(item.name, blob);
         }
   
-        // 生成 ZIP 并用浏览器下载
-        const content = await zip.generateAsync({ type: "blob" });
+        const content = await zip.generateAsync({ type: 'blob' });
         const url = URL.createObjectURL(content);
-        const a = document.createElement("a");
+        const a = document.createElement('a');
         a.href = url;
-        a.download = "converted_images.zip";
+        a.download = 'converted_images.zip';
         a.click();
         URL.revokeObjectURL(url);
-      }
-    }
+  
+        this.$message.success('转换完成，ZIP 已下载！');
+      },
+    },
   };
   </script>
   
   <style>
-  #app { text-align: center; margin-top: 20px; }
+  #app {
+    text-align: center;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+  }
   
-  /* 预览区域样式 */
-  .preview { display: flex; flex-wrap: wrap; justify-content: center; margin: 20px 0; }
-  .preview div { margin: 10px; }
+  .preview {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px 0;
+  }
   
-  /* canvas 样式 */
-  canvas { max-width: 200px; border: 1px solid #ccc; display: block; margin: 5px auto; }
+  .preview div {
+    margin: 10px;
+    text-align: center;
+  }
+  
+  canvas {
+    max-width: 200px;
+    border: 1px solid #ccc;
+    display: block;
+    margin: 5px auto;
+  }
   </style>
-  

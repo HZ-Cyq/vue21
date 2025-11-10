@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<!-- 外部虽然定义了红色，但是里面仍然是蓝色 
+    外部对里面不产生任何影响，如果把里面的style去掉，里面仍然不会变成红色
+-->
+<html>
+    <head>
+        <title>基本shadowdom</title>
+        <meta charset="UTF-8">
+        <style>
+            p { color: red; } /* 外部样式 */
+        </style>
+    </head>
+    <body>
+        <shadow-element></shadow-element>
+        <script>
+            class ShadomElement extends HTMLElement {
+                constructor() {
+                    super();
+                    // open document.querySelector("shadow-element").shadowRoot有值
+                    // closed 没有值，为null
+                    let showdom = this.attachShadow({mode:"closed"});
+                    showdom.innerHTML = `
+                    <style>p { color:blue; }</style>
+                    <p>这是Shadow内部</p>
+                    `
+                }
+            }
+            customElements.define("shadow-element", ShadomElement);
+        </script>
+    </body>
+</html>

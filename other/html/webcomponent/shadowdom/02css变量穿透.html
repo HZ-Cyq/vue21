@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>shadowdom变量穿透</title>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <shadow-test style="--p-color:red"></shadow-test>
+        <script>
+            class ShadomTest extends HTMLElement {
+                constructor() {
+                    super();
+                    let shadow = this.attachShadow({mode:"open"})
+                    shadow.innerHTML = `
+                        <style> 
+                            p { 
+                                color:var(--p-color, blue);
+                            } 
+                        </style>
+                        <p>Hello Shadow dom</p>
+                        `
+                }
+            }
+            customElements.define("shadow-test", ShadomTest);
+            // document.querySelector("shadow-test").shadowRoot.innerHTML可以打印shadow.innerHTML的内容。
+        </script>
+    </body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <my-btn></my-btn>
+    </head>
+    <body>
+        <script>
+            class MyBtn extends HTMLElement {
+                constructor() {
+                    super();
+                    let shadow = this.attachShadow({mode:"open"});
+                    shadow.innerHTML = `
+                        <button>点我</button>
+                        <button>点我2</button>
+                    `
+                    // 绑定第一个button
+                    shadow.querySelector("button").addEventListener("click", (e) => {
+                        // 这里的target是<button>点我</button>
+                        console.log("内部捕获:", e.target);
+                    })
+                }
+            }
+            customElements.define("my-btn", MyBtn);
+            document.body.addEventListener("click", e=> {
+                // 这里的target是<my-btn></my-btn>，而不是具体的<button>标签，这里发生了重定向
+                console.log("外部捕获", e.target);
+            })
+        </script>
+    </body>
+</html>

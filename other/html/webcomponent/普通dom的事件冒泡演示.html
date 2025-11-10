@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>普通dom的事件冒泡演示</title>
+        <style>
+            div {
+              padding: 20px;
+              border: 2px solid #555;
+              margin: 10px;
+            }
+          </style>
+    </head>
+    <body>
+        <h2>普通dom的事件冒泡演示</h2>
+        <div id="outer">
+            outer
+            <div id="middle">
+                middle
+                <div id="inner"> inner（点击我） </div>
+            </div>
+        </div>
+        <script>
+            document.getElementById("outer").addEventListener("click", event => {
+                console.log("外层div被触发", event.target);
+            })
+            document.getElementById("middle").addEventListener("click", event => {
+                console.log("中层div被触发", event.target);
+                // 不会继续向外层冒泡了。
+                event.stopPropagation();
+            })
+            document.getElementById("inner").addEventListener("click", event => {
+                console.log("内层div被触发", event.target);
+            });
+
+        </script>
+    </body>
+</html>

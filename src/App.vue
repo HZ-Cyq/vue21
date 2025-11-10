@@ -38,7 +38,8 @@ export default {
             { title: "TestElInputNumber", componentName: "TestElInputNumber" },
             { title: "TestElTable", componentName: "TestElTable" },
             { title: "TestElTable2", componentName: "TestElTable2" },
-            { title: "TestElInput", componentName: "TestElInput" }
+            { title: "TestElInput", componentName: "TestElInput" },
+            { title: "TestTableDemo", componentName: "TestTableDemo" }
           ]
         },
         {
@@ -144,6 +145,7 @@ export default {
         TestElInputNumber: () => import("@/components/elementui/TestElInputNumber.vue"),
         TestElTable: () => import("@/components/elementui/TestElTable.vue"),
         TestElTable2: () => import("@/components/elementui/TestElTable2.vue"),
+        TestTableDemo: () => import("@/components/elementui/tabletest/TableDemo.vue"),
         TestBasicScatterChart: () => import("@/components/echarts/TestBasicScatterChart.vue"),
         TestElInput: () => import("@/components/elementui/testelinput/TestElInput.vue"),
         MyTest: () => import("@/components/echarts/learn/MyTest.vue")

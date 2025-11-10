@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head><title>Focus Test</title></head>
+<body>
+  <button id="myBtn">点我或 Tab 到我</button>
+  <script>
+    const btn = document.getElementById('myBtn');
+    btn.addEventListener('focus', () => console.log('Focused!'));
+    btn.addEventListener('blur', () => console.log('Blurred!'));
+  </script>
+</body>
+</html>
